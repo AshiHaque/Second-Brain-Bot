@@ -1,6 +1,10 @@
 from typing import Final
 from telegram import Update
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
+import csv
+
+# Define the CSV file path
+CSV_FILE_PATH = 'D:/Python Projects/Second-Brain-Bot/resources/urls.csv'
 
 
 TOKEN: Final = '7004294087:AAFyTdzctBZ-MWyspCXD0O21HDQTFAvYd9g'
@@ -41,19 +45,33 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     print(f'User({update.message.chat.id}) in {message_type}: "{text}"')
 
-    if message_type == 'group' :
-        if BOT_USERNAME in text:
-            new_text: str = text.replace(BOT_USERNAME, '').strip()
-            response: str = handle_response(new_text)
-        else:
-            return
+    # Extract URL from the message
+    urls = extract_urls(text)
 
+    # Check if any URLs were found
+    if urls:
+        # Append the URLs to the CSV file
+        append_urls_to_csv(urls)
+
+        # Respond to the user
+        response = f"Received {len(urls)} URL(s). Saved to CSV file."
     else:
-        response: str = handle_response(text)     
-    
+        response = "No valid URLs found in the message."
+
     print('Bot:', response)
 
     await update.message.reply_text(response)
+
+def extract_urls(text: str) -> list:
+    # This is a simple example function to extract URLs from the text
+    # You may want to use a more robust method for real-world use cases
+    return [word for word in text.split() if word.startswith("http")]
+
+def append_urls_to_csv(urls: list):
+    # Append the URLs to the CSV file
+    with open(CSV_FILE_PATH, 'a', newline='') as csvfile:
+        writer = csv.writer(csvfile)
+        writer.writerow(urls)
 
 
 async def error(update: Update, context: ContextTypes.DEFAULT_TYPE):
