@@ -3,8 +3,8 @@ from telegram import Update
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
 
 
-TOKEN: Final = 'your_telegram_token'
-BOT_USERNAME: Final = 'your_notion_token'
+TOKEN: Final = '7004294087:AAFyTdzctBZ-MWyspCXD0O21HDQTFAvYd9g'
+BOT_USERNAME: Final = '@A_SecondBrainBot'
 
 #Commands
 
