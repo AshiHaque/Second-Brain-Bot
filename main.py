@@ -1,13 +1,18 @@
 from typing import Final
 from telegram import Update
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
+import os
+from dotenv import load_dotenv
 import csv
 
 # Define the CSV file path
 CSV_FILE_PATH = 'D:/Python Projects/Second-Brain-Bot/resources/urls.csv'
 
+# Load environment variables from .env file
+load_dotenv()
 
-TOKEN: Final = '7004294087:AAFyTdzctBZ-MWyspCXD0O21HDQTFAvYd9g'
+# Retrieve the integration token from the environment variable
+TOKEN: Final = os.getenv("TELEGRAM_BOT_TOKEN")
 BOT_USERNAME: Final = '@A_SecondBrainBot'
 
 #Commands
