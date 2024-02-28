@@ -64,7 +64,6 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 def extract_urls(text: str) -> list:
     # This is a simple example function to extract URLs from the text
-    # You may want to use a more robust method for real-world use cases
     return [word for word in text.split() if word.startswith("http")]
 
 def append_urls_to_csv(urls: list):
