@@ -4,6 +4,7 @@ from telegram.ext import Application, CommandHandler, MessageHandler, filters, C
 import os
 from dotenv import load_dotenv
 import csv
+from saveResources import create_pages_for_urls
 
 # Define the CSV file path
 CSV_FILE_PATH = 'D:/Python Projects/Second-Brain-Bot/resources/urls.csv'
@@ -58,8 +59,11 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         # Append the URLs to the CSV file
         append_urls_to_csv(urls)
 
+        # Call the function to create Notion pages
+        create_pages_for_urls(urls)
+
         # Respond to the user
-        response = f"Received {len(urls)} URL(s). Saved to CSV file."
+        response = f"Received {len(urls)} URL(s). Saved to CSV file and Notion."
     else:
         response = "No valid URLs found in the message."
 
