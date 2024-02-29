@@ -1,5 +1,4 @@
 import os
-import csv
 from dotenv import load_dotenv
 from notion_client import Client
 
@@ -15,42 +14,14 @@ client = Client(auth=integration_token)
 # Specify parent database ID
 parent_database_id = "af58ab4dbc1c4d68ad71b66d1d284732"
 
-# Read URLs from the CSV file
-csv_file_path = 'D:/Python Projects/Second-Brain-Bot/resources/urls.csv'
-
-def read_urls_from_csv(csv_file_path):
-    urls = []
-    with open(csv_file_path, 'r') as csvfile:
-        reader = csv.reader(csvfile)
-        for row in reader:
-            urls.extend(row)
-    return urls
-
 # Define properties for the new page
-def create_page_properties(title, url):
+def create_page_properties(title, url, og_title=None, og_image=None, og_tags=None):
     properties = {
         "Name": {
             "title": [
                 {
                     "text": {
-                        "content": title
-                    }
-                }
-            ]
-        },
-        "Tags": {
-            "multi_select": [
-                {"name": "Tag1"},
-                {"name": "Tag2"}
-            ]
-        },
-        "Files & media": {
-            "files": [
-                {
-                    "name": "File Name",
-                    "type": "external",
-                    "external": {
-                        "url": "https://example.com/file"
+                        "content": og_title if og_title else "Content"
                     }
                 }
             ]
@@ -59,18 +30,74 @@ def create_page_properties(title, url):
             "url": url
         }
     }
+
+    # Add cover image if available
+    if og_image:
+        properties["Files & media"] = {
+            "files": [
+                {
+                    "name": "Image",
+                    "type": "external",
+                    "external": {
+                        "url": str(og_image)  
+                    }
+                }
+            ]
+        }
+
+    if og_tags:
+        properties["Tags"] = {
+            "multi_select": [{"name": tag} for tag in og_tags]
+        }
+
     return properties
 
-url_counter = 0
+# Create a new page in the specified database for the URL
+async def create_pages_for_url(scraped_metadata, urls):
+    try:
+        for url, metadata in zip(urls, scraped_metadata):
+            # Check if scraped_metadata is None
+            if metadata is None:
+                print("Error: No metadata scraped for the URL:", url)
+                # Create a default title and set metadata to None
+                og_title = "Content"
+                og_description = None
+                og_image = None
+                og_tags = None
+            else:
+                # Extract metadata fields
+                og_title = metadata.get('title')
+                og_image = metadata.get('image')
+                og_description = metadata.get('description')
+                og_tags = metadata.get('tags')
 
-# Create a new page in the specified database for each URL
-def create_pages_for_urls(urls):
-    global url_counter  # Access the counter defined outside the function
+            # Create page properties with the extracted metadata
+            properties = create_page_properties(og_title, url, og_title, og_image, og_tags)
 
-    for url in urls:
-        url_counter += 1  # Increment the counter for each URL
+            # Create the Notion page
+            page = client.pages.create(parent={"database_id": parent_database_id}, properties=properties, cover={"type": "external", "external": {"url": og_image}} if og_image else None)
+            print("Page created for URL:", url)
 
-        title = f"Content {url_counter}"  # Dynamic title based on the counter
-        properties = create_page_properties(title, url)
-        page = client.pages.create(parent={"database_id": parent_database_id}, properties=properties, cover={"type": "external", "external": {"url": "https://images.unsplash.com/photo-1488190211105-8b0e65b80b4e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2MzkyMXwwfDF8c2VhcmNofDV8fGNvbnRlbnR8ZW58MHx8fHwxNzA5MDk4MTc3fDA&ixlib=rb-4.0.3&q=80&w=200"}})
-        print("Page created for URL:", url)
+            # Add child blocks to the page if metadata is available
+            if og_description:
+                client.blocks.children.append(
+                    block_id=page["id"],
+                    children=[
+                        {
+                            "object": "block",
+                            "type": "heading_2",
+                            "heading_2": {
+                                "rich_text": [{"type": "text", "text": {"content": og_title}}]
+                            }
+                        },
+                        {
+                            "object": "block",
+                            "type": "paragraph",
+                            "paragraph": {
+                                "rich_text": [{"type": "text", "text": {"content": og_description}}]
+                            }
+                        }
+                    ]
+                )
+    except Exception as e:
+        print("Error creating page:", e)
