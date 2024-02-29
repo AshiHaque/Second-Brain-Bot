@@ -4,7 +4,7 @@ from telegram.ext import Application, CommandHandler, MessageHandler, filters, C
 import os
 from dotenv import load_dotenv
 import csv
-from saveResources import create_pages_for_urls
+from saveContent import create_pages_for_urls
 
 # Define the CSV file path
 CSV_FILE_PATH = 'D:/Python Projects/Second-Brain-Bot/resources/urls.csv'
