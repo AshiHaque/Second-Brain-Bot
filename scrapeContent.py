@@ -13,16 +13,14 @@ def scrape_open_graph_metadata(url):
                 og_author = video.author
                 og_image = video.image_post
                 og_description = video.desc
-                og_tags = video.tags
 
                 # Print the extracted metadata
                 print("TikTok Video Metadata:")
                 print("Author:", og_author)
                 print("Image:", og_image)
                 print("Description:", og_description)
-                print("Tags:", og_tags)
                 
-                return og_author, og_image, og_description, og_tags
+                return og_author, og_image, og_description
         
         else:
             # Send a GET request to the URL
