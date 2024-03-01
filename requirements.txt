@@ -2,7 +2,6 @@
 asyncio
 beautifulsoup4==4.11.2
 notion==0.0.28
-notion-client==2.2.1
 python-dotenv==1.0.1
 python-telegram-bot==20.8
 requests==2.31.0
