@@ -79,4 +79,4 @@ if __name__ == '__main__':
     app.add_error_handler(error)
 
     # Run Flask app with Gunicorn
-    app.run_webhook(port=int(os.environ.get("PORT", 8080)), host="0.0.0.0")
+    app.run_webhook(port=int(os.environ.get("PORT", 8080)))
