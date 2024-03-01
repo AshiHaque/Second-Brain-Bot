@@ -1,5 +1,5 @@
 from typing import Final
-from telegram import Update
+from telegram import Update, Bot
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
 import os
 from dotenv import load_dotenv
@@ -80,4 +80,8 @@ if __name__ == '__main__':
 
     # Set the HTTPS webhook URL
     webhook_url = "https://second-brain-bot.onrender.com"
-    app.run_webhook(port=int(os.environ.get("PORT", 8080)), url=webhook_url)
+    bot = Bot(TOKEN)
+    bot.set_webhook(url=webhook_url)
+
+    # Start the application
+    app.run_polling(port=int(os.environ.get("PORT", 8080)))
