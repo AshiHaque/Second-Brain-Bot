@@ -78,5 +78,6 @@ if __name__ == '__main__':
     # Errors
     app.add_error_handler(error)
 
-    # Run Flask app with Gunicorn
-    app.run_webhook(port=int(os.environ.get("PORT", 8080)))
+    # Set the HTTPS webhook URL
+    webhook_url = "https://second-brain-bot.onrender.com"
+    app.run_webhook(port=int(os.environ.get("PORT", 8080)), url=webhook_url)
