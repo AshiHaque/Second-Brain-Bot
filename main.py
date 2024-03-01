@@ -78,7 +78,5 @@ if __name__ == '__main__':
     # Errors
     app.add_error_handler(error)
 
-    # Polls the bot
-    print('Polling...')
-    app.run_polling(poll_interval=3)
-
+    # Run Flask app with Gunicorn
+    app.run_webhook(port=int(os.environ.get("PORT", 8080)), host="0.0.0.0")
