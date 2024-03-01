@@ -80,4 +80,5 @@ if __name__ == '__main__':
 
     # Set the HTTPS webhook URL
     webhook_url = "https://second-brain-bot.onrender.com"
-    app.run_webhook(port=int(os.environ.get("PORT", 8080)), url=webhook_url)
+    app.bot.set_webhook(webhook_url)
+    app.run_webhook(port=int(os.environ.get("PORT", 8080)))
